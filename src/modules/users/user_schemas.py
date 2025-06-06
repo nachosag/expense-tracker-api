@@ -15,4 +15,4 @@ class UserResponse(BaseModel):
     expenses: list[expense_schema.ExpenseResponse] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
