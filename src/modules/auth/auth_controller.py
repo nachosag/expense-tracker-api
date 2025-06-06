@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from ...database.core import SessionDependency
@@ -11,8 +11,8 @@ auth_router = APIRouter()
     "/login", response_model=auth_schemas.Token, status_code=status.HTTP_200_OK
 )
 def login(
-    form_data: OAuth2PasswordRequestForm,
-    session: SessionDependency,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    session: SessionDependency = Depends(),
 ):
     user = auth_service.authenticate_user(
         form_data.username, form_data.password, session
