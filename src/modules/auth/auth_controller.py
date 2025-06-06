@@ -11,8 +11,8 @@ auth_router = APIRouter()
     "/login", response_model=auth_schemas.Token, status_code=status.HTTP_200_OK
 )
 def login(
+    session: SessionDependency,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    session: SessionDependency = Depends(),
 ):
     user = auth_service.authenticate_user(
         form_data.username, form_data.password, session
