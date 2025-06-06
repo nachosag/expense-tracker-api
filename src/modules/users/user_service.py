@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 from . import user_schemas
 from ...database import models
 from ...database.core import SessionDependency
+from ..auth import auth_service
 
 
 def confirm_unique_user(session: SessionDependency, request: user_schemas.UserRequest):
@@ -18,7 +19,9 @@ def confirm_unique_user(session: SessionDependency, request: user_schemas.UserRe
 def register_user(session: SessionDependency, request: user_schemas.UserRequest):
     try:
         confirm_unique_user(session, request)
-        user = models.User(**request.model_dump())
+        user_data = request.model_dump()
+        user_data["password"] = auth_service.get_password_hash(user_data["password"])
+        user = models.User(**user_data)
         session.add(user)
         session.commit()
         session.refresh(user)
