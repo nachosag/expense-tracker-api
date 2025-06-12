@@ -1,9 +1,9 @@
-from typing import Annotated
-from sqlmodel import create_engine, SQLModel, Session
 from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI
 from dotenv import load_dotenv
+from fastapi import Depends, FastAPI
 from os import getenv
+from sqlmodel import create_engine, SQLModel, Session
+from typing import Annotated
 
 load_dotenv()
 
@@ -11,18 +11,15 @@ url = getenv("DATABASE_URL")
 if not url:
     raise RuntimeError("DATABASE_URL environment variable is not set")
 
-engine = create_engine(url=url, echo=True)
+engine = create_engine(url=url, echo=True, connect_args={"check_same_thread": False})
 
 
 def get_session():
     with Session(engine) as session:
         yield session
-    session.close()
 
 
 def create_db_and_tables():
-    from . import models  # type: ignore  # noqa: F401
-
     SQLModel.metadata.create_all(engine)
 
 
