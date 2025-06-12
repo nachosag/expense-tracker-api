@@ -8,7 +8,7 @@ auth_router = APIRouter()
 
 
 @auth_router.post(
-    "/login", response_model=auth_schemas.Token, status_code=status.HTTP_200_OK
+    path="/login", response_model=auth_schemas.Token, status_code=status.HTTP_200_OK
 )
 def login(
     session: SessionDependency,
@@ -21,3 +21,12 @@ def login(
         user.email, user.id, timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return auth_schemas.Token(access_token=token, token_type="bearer")
+
+
+@auth_router.post(
+    path="/signup",
+    status_code=status.HTTP_201_CREATED,
+    response_model=auth_schemas.SignupResponse,
+)
+def signup(session: SessionDependency, request: auth_schemas.SignupRequest):
+    return auth_service.signup(session, request)

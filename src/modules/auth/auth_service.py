@@ -62,6 +62,18 @@ def get_current_user(token: TokenDependency):
     return verify_token(token)
 
 
+def confirm_unique_user(
+    session: SessionDependency, request: auth_schemas.SignupRequest
+):
+    if session.exec(
+        select(models.User).where(models.User.email == request.email)
+    ).first():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User already register",
+        )
+
+
 def login(
     email: EmailStr,
     password: str,
@@ -72,3 +84,19 @@ def login(
         user.email, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return auth_schemas.Token(access_token=token, token_type="bearer")
+
+
+def signup(session: SessionDependency, request: auth_schemas.SignupRequest):
+    try:
+        confirm_unique_user(session, request)
+        request.password = get_password_hash(request.password)
+        user = models.User(**request.model_dump())
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        logging.info("User registered correctly")
+        return user
+    except Exception as e:
+        session.rollback()
+        logging.error(e)
+        raise e
