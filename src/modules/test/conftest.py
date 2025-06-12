@@ -2,7 +2,7 @@ from sqlalchemy import Engine
 from ...database.core import get_session
 from ...main import app
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, StaticPool
 from dotenv import load_dotenv
 from os import getenv
 import pytest
@@ -15,7 +15,7 @@ def engine_fixture():
     url = getenv("TEST_DATABASE_URL")
     if not url:
         raise RuntimeError("DATABASE_URL environment variable is not set")
-    engine = create_engine(url=url, connect_args={"check_same_thread": False})
+    engine = create_engine(url=url, connect_args={"check_same_thread": False}, poolclass=StaticPool)
     return engine
 
 @pytest.fixture(name="session")
