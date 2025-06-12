@@ -20,12 +20,12 @@ def confirm_unique_user(session: SessionDependency, request: user_schemas.UserRe
 def register_user(session: SessionDependency, request: user_schemas.UserRequest):
     try:
         confirm_unique_user(session, request)
-        user_data = request.model_dump()
-        user_data["password"] = auth_service.get_password_hash(user_data["password"])
-        user = models.User(**user_data)
+        request.password = auth_service.get_password_hash(request.password)
+        user = models.User(**request.model_dump())
         session.add(user)
         session.commit()
         session.refresh(user)
+        logging.info("Usuario registrado correctamente")
         return user
     except Exception as e:
         session.rollback()
