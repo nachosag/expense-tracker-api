@@ -2,6 +2,17 @@ from sqlmodel import Field, Relationship, SQLModel
 from pydantic import EmailStr
 from datetime import datetime, date
 from typing import Optional
+from enum import StrEnum
+
+
+class CategoryName(StrEnum):
+    GROCERIES = "Groceries"
+    LEISURE = "Leisure"
+    ELECTRONICS = "Electronics"
+    UTILITIES = "Utilities"
+    CLOTHING = "Clothing"
+    HEALTH = "Health"
+    OTHERS = "Others"
 
 
 class User(SQLModel, table=True):
@@ -19,7 +30,7 @@ class User(SQLModel, table=True):
 class Category(SQLModel, table=True):
     __tablename__ = "categories"  # type: ignore
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
-    name: str = Field(nullable=False, unique=True, max_length=50)
+    name: CategoryName = Field(nullable=False, max_length=50)
     created_at: datetime = Field(default_factory=datetime.now, nullable=False)
 
     # Relación uno-a-muchos con Expense
