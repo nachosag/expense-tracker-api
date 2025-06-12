@@ -1,9 +1,26 @@
-from pydantic import BaseModel, ConfigDict
+from datetime import date, datetime
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional
 
+class ExpenseBase(BaseModel):
+    category_id: int
+    amount: float = Field(gt=0)
+    description: Optional[str]
+    spent_at: date
 
-class ExpenseResponse(BaseModel):
+class ExpenseResponse(ExpenseBase):
     id: int
-    amount: float
-    description: str
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class CreateExpenseRequest(ExpenseBase):
+    pass
+
+class UpdateExpenseRequest(BaseModel):
+    category_id: Optional[int]
+    amount: Optional[float] = Field(gt=0)
+    description: Optional[str]
+    spent_at: Optional[date]
