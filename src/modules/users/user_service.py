@@ -4,6 +4,7 @@ from . import user_schemas
 from ...database import models
 from ...database.core import SessionDependency
 from ..auth import auth_service
+import logging
 
 
 def confirm_unique_user(session: SessionDependency, request: user_schemas.UserRequest):
@@ -28,4 +29,5 @@ def register_user(session: SessionDependency, request: user_schemas.UserRequest)
         return user
     except Exception as e:
         session.rollback()
+        logging.error(e)
         raise e
