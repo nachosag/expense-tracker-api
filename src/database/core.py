@@ -11,7 +11,7 @@ url = getenv("DATABASE_URL")
 if not url:
     raise RuntimeError("DATABASE_URL environment variable is not set")
 
-engine = create_engine(url=url, echo=True, connect_args={"check_same_thread": False})
+engine = create_engine(url=url, echo=False, connect_args={"check_same_thread": False})
 
 
 def get_session():
