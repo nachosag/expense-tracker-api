@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from ..expenses import expense_schema
 
 
@@ -14,5 +14,4 @@ class UserResponse(BaseModel):
     name: str
     expenses: list[expense_schema.ExpenseResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

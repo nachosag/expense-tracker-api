@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ExpenseResponse(BaseModel):
@@ -6,5 +6,4 @@ class ExpenseResponse(BaseModel):
     amount: float
     description: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
