@@ -5,7 +5,7 @@ from sqlmodel import Session
 from typing import Any
 
 
-def test_create_expense_success(session: Session, client: TestClient):
+def test_create_expense_success(client: TestClient):
     user_data = {
         "email": "john.doe@example.com",
         "password": "fake_password",
@@ -29,7 +29,7 @@ def test_create_expense_success(session: Session, client: TestClient):
 
     response = client.post(url="/expenses/", json=expense_data, headers=headers)
     data = response.json()
-    
+
     assert response.status_code == status.HTTP_201_CREATED
     assert data["id"] == 1
     assert data["user_id"] == 1
@@ -51,6 +51,7 @@ def test_create_expense_incomplete_data(session: Session, client: TestClient):
 
 def test_create_expense_unauthenticated(session: Session, client: TestClient):
     pass
+
 
 def test_create_expense_with_unknown_category():
     pass

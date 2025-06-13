@@ -4,13 +4,16 @@ from sqlmodel import Session
 
 
 def test_get_expense_by_id_success():
-  pass
+    pass
+
 
 def test_get_expense_not_found():
-  pass
+    pass
+
 
 def test_get_expense_unauthorized_access():
-  pass
+    pass
+
 
 def test_get_expense_of_another_user():
-  pass
+    pass

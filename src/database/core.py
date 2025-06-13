@@ -31,6 +31,7 @@ async def lifespan(app: FastAPI):
     seed_categories(None)
     yield
 
+
 def seed_categories(engine_override: Engine | None):
     categories: list[models.Category] = []
     eng = engine_override or engine

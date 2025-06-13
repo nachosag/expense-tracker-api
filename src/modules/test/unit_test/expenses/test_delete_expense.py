@@ -4,10 +4,12 @@ from sqlmodel import Session
 
 
 def test_delete_expense_success():
-  pass
+    pass
+
 
 def test_delete_expense_not_found():
-  pass
+    pass
+
 
 def test_delete_expense_unauthorized_access():
-  pass
+    pass

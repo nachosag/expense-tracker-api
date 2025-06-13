@@ -15,21 +15,25 @@ def engine_fixture():
     url = getenv("TEST_DATABASE_URL")
     if not url:
         raise RuntimeError("DATABASE_URL environment variable is not set")
-    engine = create_engine(url=url, connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    engine = create_engine(
+        url=url, connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
     return engine
+
 
 @pytest.fixture(name="session")
 def session_fixture(engine: Engine):
     SQLModel.metadata.create_all(engine)
     seed_categories(engine)
     with Session(engine) as session:
-      yield session
+        yield session
+
 
 @pytest.fixture(name="client")
 def client_fixture(session: Session):
     def override_get_session():
         return session
-    
+
     app.dependency_overrides[get_session] = override_get_session
     with TestClient(app=app) as client:
         yield client

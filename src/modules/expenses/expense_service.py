@@ -27,8 +27,7 @@ def create_expense(
     token_data = auth_service.get_current_user(token=token)
     if not token_data.user_id:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
         )
     try:
         expense = models.Expense(**request.model_dump(), user_id=token_data.user_id)

@@ -4,16 +4,20 @@ from sqlmodel import Session
 
 
 def test_update_expense_success():
-  pass
+    pass
+
 
 def test_update_expense_not_found():
-  pass
+    pass
+
 
 def test_update_expense_unauthorized_access():
-  pass
+    pass
+
 
 def test_update_expense_invalid_data():
-  pass
+    pass
+
 
 def test_update_expense_incomplete_data():
-  pass
+    pass

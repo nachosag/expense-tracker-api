@@ -14,7 +14,7 @@ def test_successful_login(client: TestClient):
         "/auth/signup",
         json=user_data,
     ).json()
-    
+
     response = client.post(
         "/auth/login",
         data={"username": user_data["email"], "password": user_data["password"]},
