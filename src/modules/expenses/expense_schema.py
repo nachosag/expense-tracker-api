@@ -17,7 +17,7 @@ class ExpenseResponse(ExpenseBase):
     model_config = ConfigDict(from_attributes=True)
 
 class CreateExpenseRequest(ExpenseBase):
-    pass
+    model_config = ConfigDict(from_attributes=True)
 
 class UpdateExpenseRequest(BaseModel):
     category_id: Optional[int]

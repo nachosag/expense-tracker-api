@@ -16,7 +16,7 @@ def create_expense(
     token: TokenDependency,
     request: expense_schema.CreateExpenseRequest,
 ):
-    pass
+    return expense_service.create_expense(session, token, request)
 
 
 @expenses_router.get(
