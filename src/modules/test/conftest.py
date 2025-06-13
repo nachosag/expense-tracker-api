@@ -1,5 +1,5 @@
 from sqlalchemy import Engine
-from ...database.core import get_session
+from ...database.core import get_session, seed_categories
 from ...main import app
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine, StaticPool
@@ -21,7 +21,7 @@ def engine_fixture():
 @pytest.fixture(name="session")
 def session_fixture(engine: Engine):
     SQLModel.metadata.create_all(engine)
-
+    seed_categories(engine)
     with Session(engine) as session:
       yield session
 
