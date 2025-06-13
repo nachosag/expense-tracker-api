@@ -53,7 +53,6 @@ def update_expense(
 
 @expenses_router.delete(
     path="/{expense_id}",
-    response_model=expense_schema.ExpenseResponse,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
