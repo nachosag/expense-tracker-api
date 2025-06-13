@@ -24,17 +24,51 @@ def test_successful_login(session: Session, client: TestClient):
     assert data["token_type"] == "bearer"
 
 
-def test_unauthorized_login(session: Session, client: TestClient):
+def test_login_with_nonexistent_user(client: TestClient):
     response = client.post(
         "/auth/login",
-        data={"username": "john.doe@gmail.com", "password": "false_password"},
+        data={"username": "not.exists@gmail.com", "password": "any_password"},
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_incomplete_login(session: Session, client: TestClient):
+def test_login_with_empty_password(session: Session, client: TestClient):
+    auth_service.signup(
+        session,
+        auth_schemas.SignupRequest(
+            email="some.username@gmail.com", password="empty_password", name="Empty Pass"
+        ),
+    )
     response = client.post(
         "/auth/login",
-        data={"username": "john.doe@gmail.com"},
+        data={"username": "some.username@gmail.com", "password": ""},
+    )
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_login_with_empty_username(session: Session, client: TestClient):
+    auth_service.signup(
+        session,
+        auth_schemas.SignupRequest(
+            email="empty.username@gmail.com", password="some_password", name="Empty Pass"
+        ),
+    )
+    response = client.post(
+        "/auth/login",
+        data={"username": "", "password": "some_password"},
+    )
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_login_with_missing_fields(session: Session, client: TestClient):
+    auth_service.signup(
+        session,
+        auth_schemas.SignupRequest(
+            email="empty.pass@gmail.com", password="empty_password", name="Empty Fields"
+        ),
+    )
+    response = client.post(
+        "/auth/login",
+        data={},
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
