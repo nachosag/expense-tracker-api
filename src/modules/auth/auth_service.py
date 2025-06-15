@@ -46,7 +46,7 @@ def create_access_token(email: EmailStr, user_id: int, expires_delta: timedelta)
     return jwt.encode(claims=claims, key=KEY, algorithm=ALGORITHM)
 
 
-def verify_token(token: str):
+def get_current_user(token: TokenDependency):
     try:
         payload = jwt.decode(token=token, key=KEY, algorithms=ALGORITHM)
         user_id = payload.get("id")
@@ -56,10 +56,6 @@ def verify_token(token: str):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
-
-
-def get_current_user(token: TokenDependency):
-    return verify_token(token)
 
 
 def confirm_unique_user(
