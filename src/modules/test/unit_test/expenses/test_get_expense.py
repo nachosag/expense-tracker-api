@@ -29,8 +29,16 @@ def test_get_expense_by_id_success(client: TestClient):
     client.post(url="/expenses/", json=expense_data, headers=headers)
 
     response = client.get(url="/expenses/1", headers=headers)
-
+    data = response.json()
     assert response.status_code == status.HTTP_200_OK
+    assert data["category_id"] == 1
+    assert data["amount"] == 1
+    assert data["description"] == "string"
+    assert data["spent_at"] == f"{date.today()}"
+    assert data["id"] == 1
+    assert data["user_id"] == 1
+    assert data["created_at"].startswith(date.today().isoformat())
+    assert data["updated_at"].startswith(date.today().isoformat())
 
 
 def test_get_expense_not_found(client: TestClient):
