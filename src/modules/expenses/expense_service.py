@@ -55,9 +55,8 @@ def get_expense(expense_id: int, session: SessionDependency, token: TokenDepende
         )
     return expense
 
+
 def list_expenses(session: SessionDependency, token: TokenDependency):
     token_data = auth_service.get_current_user(token=token)
-    stmt = select(models.Expense).where(
-        models.Expense.user_id == token_data.user_id
-    )
+    stmt = select(models.Expense).where(models.Expense.user_id == token_data.user_id)
     return session.exec(stmt).all()

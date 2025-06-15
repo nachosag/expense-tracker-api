@@ -21,8 +21,7 @@ def test_list_expenses_is_empty(client: TestClient):
 
     response = client.get(url="/expenses/", headers=headers)
     data: list[Any] = response.json()
-    
-    
+
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(data, list)
     assert len(data) == 0
@@ -109,6 +108,7 @@ def test_list_expenses_of_another_user(client: TestClient):
     data: list[Any] = response.json()
     assert response.status_code == status.HTTP_200_OK
     assert len(data) == 0
+
 
 def test_list_expenses_unauthenticated(client: TestClient):
     user_data = {
