@@ -41,3 +41,16 @@ def create_expense(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error"
         )
+
+
+def get_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
+    token_data = auth_service.get_current_user(token=token)
+    stmt = select(models.Expense).where(
+        models.Expense.id == expense_id, models.Expense.user_id == token_data.user_id
+    )
+    expense = session.exec(stmt).first()
+    if not expense:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found"
+        )
+    return expense

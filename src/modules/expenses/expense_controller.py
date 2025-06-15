@@ -30,11 +30,11 @@ def list_expenses(session: SessionDependency, token: TokenDependency):
 
 @expenses_router.get(
     path="/{expense_id}",
-    response_model=list[expense_schema.ExpenseResponse],
+    response_model=expense_schema.ExpenseResponse,
     status_code=status.HTTP_200_OK,
 )
 def get_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
-    pass
+    return expense_service.get_expense(expense_id, session, token)
 
 
 @expenses_router.patch(
