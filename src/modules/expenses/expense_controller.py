@@ -25,7 +25,7 @@ def create_expense(
     status_code=status.HTTP_200_OK,
 )
 def list_expenses(session: SessionDependency, token: TokenDependency):
-    pass
+    return expense_service.list_expenses(session, token)
 
 
 @expenses_router.get(
