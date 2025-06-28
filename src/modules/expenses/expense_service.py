@@ -94,7 +94,7 @@ def update_expense(
 
 def delete_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
     expense = get_expense(expense_id, session, token)
-    try:    
+    try:
         session.delete(expense)
         session.commit()
         logging.info("Expense deleted correctly")
