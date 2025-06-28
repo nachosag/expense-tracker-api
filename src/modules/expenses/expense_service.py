@@ -74,9 +74,15 @@ def update_expense(
     for attr, val in request.model_dump(exclude_unset=True, exclude_none=True).items():
         if hasattr(expense, attr) and val != getattr(expense, attr):
             setattr(expense, attr, val)
-            
+
     expense.updated_at = datetime.now()
     session.add(expense)
     session.commit()
     session.refresh(expense)
     return expense
+
+
+def delete_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
+    expense = get_expense(expense_id, session, token)
+    session.delete(expense)
+    session.commit()

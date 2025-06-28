@@ -56,4 +56,4 @@ def update_expense(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
-    pass
+    return expense_service.delete_expense(expense_id, session, token)
