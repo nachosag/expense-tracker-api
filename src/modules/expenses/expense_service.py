@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from fastapi import HTTPException, status
 from sqlmodel import select
@@ -60,3 +61,22 @@ def list_expenses(session: SessionDependency, token: TokenDependency):
     token_data = auth_service.get_current_user(token=token)
     stmt = select(models.Expense).where(models.Expense.user_id == token_data.user_id)
     return session.exec(stmt).all()
+
+
+def update_expense(
+    expense_id: int,
+    request: expense_schema.UpdateExpenseRequest,
+    session: SessionDependency,
+    token: TokenDependency,
+):
+    expense = get_expense(expense_id, session, token)
+
+    for attr, val in request.model_dump(exclude_unset=True, exclude_none=True).items():
+        if hasattr(expense, attr) and val != getattr(expense, attr):
+            setattr(expense, attr, val)
+            
+    expense.updated_at = datetime.now()
+    session.add(expense)
+    session.commit()
+    session.refresh(expense)
+    return expense

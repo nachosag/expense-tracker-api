@@ -48,7 +48,7 @@ def update_expense(
     session: SessionDependency,
     token: TokenDependency,
 ):
-    pass
+    return expense_service.update_expense(expense_id, request, session, token)
 
 
 @expenses_router.delete(
