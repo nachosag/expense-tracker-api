@@ -47,6 +47,7 @@ def test_update_expense_success(client: TestClient):
     assert data["description"] == "New description"
     assert data["spent_at"] == str(date.today())
 
+
 def test_update_expense_not_found(client: TestClient):
     user_data = {
         "email": "john.doe@example.com",
