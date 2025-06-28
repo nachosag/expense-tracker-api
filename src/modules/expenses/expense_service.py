@@ -35,9 +35,10 @@ def create_expense(
         session.add(expense)
         session.commit()
         session.refresh(expense)
+        logging.info("Expense created correctly")
         return expense
     except Exception as e:
-        logging.error(e)
+        logging.error("An unexpected error has occurred", e)
         session.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error"
@@ -76,13 +77,31 @@ def update_expense(
             setattr(expense, attr, val)
 
     expense.updated_at = datetime.now()
-    session.add(expense)
-    session.commit()
-    session.refresh(expense)
-    return expense
+    try:
+        session.add(expense)
+        session.commit()
+        session.refresh(expense)
+        logging.info("Expense updated correctly")
+        return expense
+    except Exception as e:
+        session.rollback()
+        logging.error("An unexpected error has occurred", e)
+        raise HTTPException(
+            status_code=status.HTTP_304_NOT_MODIFIED,
+            detail="An unexpected error occurred",
+        )
 
 
 def delete_expense(expense_id: int, session: SessionDependency, token: TokenDependency):
     expense = get_expense(expense_id, session, token)
-    session.delete(expense)
-    session.commit()
+    try:    
+        session.delete(expense)
+        session.commit()
+        logging.info("Expense deleted correctly")
+    except Exception as e:
+        session.rollback()
+        logging.error("An unexpected error has occurred", e)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An unexpected error occurred",
+        )

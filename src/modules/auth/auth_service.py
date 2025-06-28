@@ -61,9 +61,8 @@ def get_current_user(token: TokenDependency):
 def confirm_unique_user(
     session: SessionDependency, request: auth_schemas.SignupRequest
 ):
-    if session.exec(
-        select(models.User).where(models.User.email == request.email)
-    ).first():
+    stmt = select(models.User).where(models.User.email == request.email)
+    if session.exec(stmt).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User already register",
@@ -92,7 +91,12 @@ def signup(session: SessionDependency, request: auth_schemas.SignupRequest):
         session.refresh(user)
         logging.info("User registered correctly")
         return user
+    except HTTPException:
+        session.rollback()
+        raise
     except Exception as e:
         session.rollback()
-        logging.error(e)
-        raise e
+        logging.error("An unexpected error occurred", e)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="An unexpected error occurred"
+        )
