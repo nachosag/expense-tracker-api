@@ -65,6 +65,129 @@ def test_list_expenses_of_current_user(client: TestClient):
     assert data[0]["updated_at"].startswith(date.today().isoformat())
 
 
+def test_list_expenses_with_dates(client: TestClient):
+    user_data = {
+        "email": "john.doe@example.com",
+        "password": "fake_password",
+        "name": "John Doe",
+    }
+    client.post(url="/auth/signup", json=user_data)
+
+    token = client.post(
+        url="/auth/login",
+        data={"username": user_data["email"], "password": user_data["password"]},
+    ).json()
+
+    headers = {"Authorization": f"Bearer {token['access_token']}"}
+
+    expense_data: dict[str, Any] = {
+        "category_id": 1,
+        "amount": 1,
+        "description": "string",
+        "spent_at": f"{date.today()}",
+    }
+
+    client.post(url="/expenses/", json=expense_data, headers=headers)
+
+    response = client.get(
+        url=f"/expenses/?from_date={date.today()}&to_date={date.today()}",
+        headers=headers,
+    )
+    data: list[Any] = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert len(data) == 1
+    assert data[0]["category_id"] == 1
+    assert data[0]["amount"] == 1
+    assert data[0]["description"] == "string"
+    assert data[0]["spent_at"] == f"{date.today()}"
+    assert data[0]["id"] == 1
+    assert data[0]["user_id"] == 1
+    assert data[0]["created_at"].startswith(date.today().isoformat())
+    assert data[0]["updated_at"].startswith(date.today().isoformat())
+
+
+def test_list_expenses_from_date(client: TestClient):
+    user_data = {
+        "email": "john.doe@example.com",
+        "password": "fake_password",
+        "name": "John Doe",
+    }
+    client.post(url="/auth/signup", json=user_data)
+
+    token = client.post(
+        url="/auth/login",
+        data={"username": user_data["email"], "password": user_data["password"]},
+    ).json()
+
+    headers = {"Authorization": f"Bearer {token['access_token']}"}
+
+    expense_data: dict[str, Any] = {
+        "category_id": 1,
+        "amount": 1,
+        "description": "string",
+        "spent_at": f"{date.today()}",
+    }
+
+    client.post(url="/expenses/", json=expense_data, headers=headers)
+
+    response = client.get(
+        url=f"/expenses/?from_date={date.today()}",
+        headers=headers,
+    )
+    data: list[Any] = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert len(data) == 1
+    assert data[0]["category_id"] == 1
+    assert data[0]["amount"] == 1
+    assert data[0]["description"] == "string"
+    assert data[0]["spent_at"] == f"{date.today()}"
+    assert data[0]["id"] == 1
+    assert data[0]["user_id"] == 1
+    assert data[0]["created_at"].startswith(date.today().isoformat())
+    assert data[0]["updated_at"].startswith(date.today().isoformat())
+
+
+def test_list_expenses_to_date(client: TestClient):
+    user_data = {
+        "email": "john.doe@example.com",
+        "password": "fake_password",
+        "name": "John Doe",
+    }
+    client.post(url="/auth/signup", json=user_data)
+
+    token = client.post(
+        url="/auth/login",
+        data={"username": user_data["email"], "password": user_data["password"]},
+    ).json()
+
+    headers = {"Authorization": f"Bearer {token['access_token']}"}
+
+    expense_data: dict[str, Any] = {
+        "category_id": 1,
+        "amount": 1,
+        "description": "string",
+        "spent_at": f"{date.today()}",
+    }
+
+    client.post(url="/expenses/", json=expense_data, headers=headers)
+
+    response = client.get(
+        url=f"/expenses/?to_date={date.today()}",
+        headers=headers,
+    )
+    data: list[Any] = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert len(data) == 1
+    assert data[0]["category_id"] == 1
+    assert data[0]["amount"] == 1
+    assert data[0]["description"] == "string"
+    assert data[0]["spent_at"] == f"{date.today()}"
+    assert data[0]["id"] == 1
+    assert data[0]["user_id"] == 1
+    assert data[0]["created_at"].startswith(date.today().isoformat())
+    assert data[0]["updated_at"].startswith(date.today().isoformat())
+
+
 def test_list_expenses_of_another_user(client: TestClient):
     # Register and login first user
     first_user = {
