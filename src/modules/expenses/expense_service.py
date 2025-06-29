@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 import logging
 from fastapi import HTTPException, status
 from sqlmodel import select
@@ -41,7 +41,7 @@ def create_expense(
         logging.error("An unexpected error has occurred", e)
         session.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error"
+            status_code=status.HTTP_409_CONFLICT, detail="Unexpected error"
         )
 
 
@@ -58,9 +58,20 @@ def get_expense(expense_id: int, session: SessionDependency, token: TokenDepende
     return expense
 
 
-def list_expenses(session: SessionDependency, token: TokenDependency):
+def list_expenses(
+    from_date: date | None,
+    to_date: date | None,
+    session: SessionDependency,
+    token: TokenDependency,
+):
     token_data = auth_service.get_current_user(token=token)
     stmt = select(models.Expense).where(models.Expense.user_id == token_data.user_id)
+
+    if from_date:
+        stmt = stmt.where(models.Expense.spent_at >= from_date)
+    if to_date:
+        stmt = stmt.where(models.Expense.spent_at <= to_date)
+
     return session.exec(stmt).all()
 
 

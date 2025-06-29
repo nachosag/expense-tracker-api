@@ -1,3 +1,4 @@
+from datetime import date
 from . import expense_schema, expense_service
 from ...database.core import SessionDependency
 from ..auth.auth_service import TokenDependency
@@ -24,8 +25,13 @@ def create_expense(
     response_model=list[expense_schema.ExpenseResponse],
     status_code=status.HTTP_200_OK,
 )
-def list_expenses(session: SessionDependency, token: TokenDependency):
-    return expense_service.list_expenses(session, token)
+def list_expenses(
+    session: SessionDependency,
+    token: TokenDependency,
+    from_date: date | None = None,
+    to_date: date | None = None,
+):
+    return expense_service.list_expenses(from_date, to_date, session, token)
 
 
 @expenses_router.get(
