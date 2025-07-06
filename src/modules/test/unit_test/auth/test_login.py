@@ -1,4 +1,4 @@
-from ....auth import auth_service
+from ....auth.auth_service import AuthService
 from datetime import timedelta
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -21,7 +21,7 @@ def test_successful_login(client: TestClient):
     )
     data = response.json()
     assert response.status_code == status.HTTP_200_OK
-    assert data["access_token"] == auth_service.create_access_token(
+    assert data["access_token"] == AuthService.create_access_token(
         signup_response["email"], signup_response["id"], timedelta(minutes=30)
     )
     assert data["token_type"] == "bearer"

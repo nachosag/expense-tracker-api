@@ -1,7 +1,8 @@
 from fastapi import APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from ...database.core import SessionDependency
-from . import auth_service, auth_schemas
+from . import auth_schemas
+from .auth_service import AuthService
 
 auth_router = APIRouter()
 
@@ -13,8 +14,7 @@ def login(
     session: SessionDependency,
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
-    return auth_service.login(form_data.username, form_data.password, session)
-
+    return AuthService.login(session, form_data)
 
 @auth_router.post(
     path="/signup",
@@ -22,4 +22,4 @@ def login(
     response_model=auth_schemas.SignupResponse,
 )
 def signup(session: SessionDependency, request: auth_schemas.SignupRequest):
-    return auth_service.signup(session, request)
+    return AuthService.signup(session, request)

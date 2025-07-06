@@ -3,7 +3,7 @@ import logging
 from fastapi import HTTPException, status
 from sqlmodel import select
 from src.database.core import SessionDependency
-from src.modules.auth import auth_service
+from src.modules.auth.auth_service import AuthService
 from src.modules.auth.auth_service import TokenDependency
 from src.modules.expenses import expense_schema
 from ...database import models
@@ -28,7 +28,7 @@ class ExpenseService:
         request: expense_schema.CreateExpenseRequest,
     ):
         ExpenseService.validate_category_id(session, request.category_id)
-        token_data = auth_service.get_current_user(token=token)
+        token_data = AuthService.get_current_user(token=token)
         if not token_data.user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
@@ -53,7 +53,7 @@ class ExpenseService:
         token: TokenDependency,
         expense_id: int,
     ):
-        token_data = auth_service.get_current_user(token=token)
+        token_data = AuthService.get_current_user(token=token)
         stmt = select(models.Expense).where(
             models.Expense.id == expense_id, models.Expense.user_id == token_data.user_id
         )
@@ -71,7 +71,7 @@ class ExpenseService:
         from_date: date | None,
         to_date: date | None,
     ):
-        token_data = auth_service.get_current_user(token=token)
+        token_data = AuthService.get_current_user(token=token)
         stmt = select(models.Expense).where(models.Expense.user_id == token_data.user_id)
 
         if from_date:
